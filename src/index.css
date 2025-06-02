@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import react-pdf styles */
+@import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+@import 'react-pdf/dist/esm/Page/TextLayer.css';
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+    @apply scroll-smooth;
+  }
+  
+  body {
+    @apply text-surface-900 bg-surface-50 antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-semibold leading-tight;
+  }
+  
+  p, li, span {
+    @apply leading-relaxed;
+  }
+}
+
+@layer components {
+  .container-narrow {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-wide {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-700 text-white focus-visible:ring-primary-500 font-bold shadow-md text-lg tracking-wide;
+  }
+  
+  .btn-primary:hover {
+    @apply bg-primary-800 scale-105 shadow-lg transition-all duration-200 ease-in-out;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-secondary-200 text-secondary-900 focus-visible:ring-secondary-500 font-bold shadow-md border border-secondary-300 text-lg tracking-wide;
+  }
+  
+  .btn-secondary:hover {
+    @apply bg-secondary-300 scale-105 shadow-lg transition-all duration-200 ease-in-out;
+  }
+  
+  .btn-outline {
+    @apply btn border border-surface-200 bg-white hover:bg-surface-50 focus-visible:ring-surface-500;
+  }
+  
+  .btn-sm {
+    @apply h-9 px-3 text-sm;
+  }
+  
+  .btn-md {
+    @apply h-10 px-4 text-sm;
+  }
+  
+  .btn-lg {
+    @apply h-12 px-6 text-base font-medium;
+  }
+  
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-glass rounded-xl shadow-glass border border-white/20;
+  }
+  
+  .premium-card {
+    @apply bg-white rounded-xl shadow-premium border border-surface-100;
+  }
+  
+  .input {
+    @apply h-10 w-full rounded-md border border-surface-200 bg-white px-3 py-2 text-sm placeholder:text-surface-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+  
+  .badge-primary {
+    @apply badge bg-primary-100 text-primary-800;
+  }
+  
+  .badge-secondary {
+    @apply badge bg-secondary-100 text-secondary-800;
+  }
+  
+  .badge-outline {
+    @apply badge border border-surface-200 text-surface-700;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-surface-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-surface-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-surface-400;
+}
+
+/* PDF Viewer custom styles */
+.react-pdf__Document {
+  @apply w-full h-full flex flex-col items-center;
+}
+
+.react-pdf__Page {
+  @apply my-4 shadow-lg;
+}
+
+.react-pdf__Page__canvas {
+  @apply mx-auto rounded-md;
+}
+
+.react-pdf__Page__textContent {
+  @apply rounded-md;
+}
+
+.react-pdf__Page__annotations {
+  @apply hidden;
+}
