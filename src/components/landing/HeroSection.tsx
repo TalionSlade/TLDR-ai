@@ -89,22 +89,22 @@ const HeroSection: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
-          <div className="glass-card p-6 text-white">
-            <FileText className="mb-4 h-8 w-8 text-secondary-300" />
+                    <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20 p-6 text-white">
+            <FileText className="mb-4 h-8 w-8 text-secondary-200" />
             <h3 className="text-xl font-semibold">Upload Documents</h3>
-            <p className="mt-2 text-white/80">Simply drag and drop your PDF Terms & Conditions document to get started.</p>
+            <p className="mt-2 text-white/90">Simply drag and drop your PDF Terms & Conditions document to get started.</p>
           </div>
 
-          <div className="glass-card p-6 text-white">
-            <SearchCheck className="mb-4 h-8 w-8 text-secondary-300" />
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20 p-6 text-white">
+            <SearchCheck className="mb-4 h-8 w-8 text-secondary-200" />
             <h3 className="text-xl font-semibold">Analyze Content</h3>
-            <p className="mt-2 text-white/80">Our AI automatically processes the document and extracts key information.</p>
+            <p className="mt-2 text-white/90">Our AI automatically processes the document and extracts key information.</p>
           </div>
 
-          <div className="glass-card p-6 text-white">
-            <MessageSquare className="mb-4 h-8 w-8 text-secondary-300" />
+          <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20 p-6 text-white">
+            <MessageSquare className="mb-4 h-8 w-8 text-secondary-200" />
             <h3 className="text-xl font-semibold">Ask Questions</h3>
-            <p className="mt-2 text-white/80">Chat with our AI to understand specific clauses and get explanations in simple language.</p>
+            <p className="mt-2 text-white/90">Chat with our AI to understand specific clauses and get explanations in simple language.</p>
           </div>
         </motion.div>
       </div>

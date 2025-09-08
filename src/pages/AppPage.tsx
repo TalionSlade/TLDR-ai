@@ -10,9 +10,9 @@ const AppPage: React.FC = () => {
   const { pdfFile } = usePDFContext();
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-100">
+    <div className="h-screen flex flex-col bg-surface-100 overflow-hidden">
       {/* App header */}
-      <header className="bg-white border-b border-surface-200 py-3">
+      <header className="bg-white border-b border-surface-200 py-3 flex-shrink-0">
         <div className="container-wide flex items-center justify-between">
           <div className="flex items-center">
             <Link to="/" className="flex items-center mr-8 gap-2">
@@ -31,22 +31,22 @@ const AppPage: React.FC = () => {
       </header>
       
       {/* Main app area */}
-      <main className="flex-1 py-6">
-        <div className="container-wide h-[calc(100vh-8rem)]">
+      <main className="flex-1 py-4 md:py-6 overflow-hidden">
+        <div className="container-wide h-full">
           {pdfFile ? (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 h-full">
               {/* PDF viewer - takes 2/3 of the space */}
-              <div className="lg:col-span-8 h-full">
+              <div className="lg:col-span-8 h-full min-h-0 order-2 lg:order-1">
                 <PDFViewer />
               </div>
               
               {/* Chat interface - takes 1/3 of the space */}
-              <div className="lg:col-span-4 h-full">
+              <div className="lg:col-span-4 h-full min-h-0 order-1 lg:order-2">
                 <ChatInterface />
               </div>
             </div>
           ) : (
-            <div className="h-full glass-card p-6">
+            <div className="h-full glass-card p-4 md:p-6 overflow-auto">
               <PDFUploader />
             </div>
           )}

@@ -33,7 +33,6 @@ const PDFViewer: React.FC = () => {
     setScale
   } = usePDFContext();
   
-  const [isLoading, setIsLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -43,13 +42,11 @@ const PDFViewer: React.FC = () => {
     if (totalPages !== numPages) {
       setTotalPages(numPages);
     }
-    setIsLoading(false);
     setError(null);
   };
 
   const onDocumentLoadError = (error: Error) => {
     console.error('Error loading PDF:', error);
-    setIsLoading(false);
     setError('Failed to load PDF. Please try uploading again.');
   };
 
@@ -66,11 +63,11 @@ const PDFViewer: React.FC = () => {
   };
 
   const zoomIn = () => {
-    setScale((prevScale) => Math.min(prevScale + 0.2, 2.0));
+    setScale(Math.min(scale + 0.2, 2.0));
   };
 
   const zoomOut = () => {
-    setScale((prevScale) => Math.max(prevScale - 0.2, 0.6));
+    setScale(Math.max(scale - 0.2, 0.6));
   };
 
   const resetZoom = () => {
@@ -97,20 +94,20 @@ const PDFViewer: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-surface-100 rounded-lg overflow-hidden">
       {/* Document header with info */}
-      <div className="bg-white border-b border-surface-200 p-4">
+      <div className="bg-white border-b border-surface-200 p-4 flex-shrink-0">
         <div className="flex justify-between items-start">
           <div className="flex items-center">
             <div className="bg-primary-100 p-2 rounded-md mr-3">
               <FileText className="h-6 w-6 text-primary-600" />
             </div>
-            <div>
-              <h3 className="font-medium text-surface-900 truncate max-w-[200px]">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-medium text-surface-900 truncate">
                 {fileInfo?.name}
               </h3>
               <div className="flex text-sm text-surface-500 mt-1 space-x-2">
                 <span>{formatFileSize(fileInfo?.size || 0)}</span>
                 <span>•</span>
-                <span>
+                <span className="truncate">
                   {fileInfo?.uploadTime
                     ? `Uploaded ${formatDistanceToNow(fileInfo.uploadTime, { addSuffix: true })}`
                     : ''}
@@ -123,7 +120,7 @@ const PDFViewer: React.FC = () => {
             size="sm"
             icon={<Trash2 size={16} />}
             onClick={handleDeleteFile}
-            className="text-red-500 hover:bg-red-50 hover:border-red-200"
+            className="text-red-500 hover:bg-red-50 hover:border-red-200 flex-shrink-0 ml-2"
           >
             Remove
           </Button>
@@ -131,7 +128,7 @@ const PDFViewer: React.FC = () => {
       </div>
       
       {/* PDF controls */}
-      <div className="bg-white border-b border-surface-200 p-2 flex justify-between items-center">
+      <div className="bg-white border-b border-surface-200 p-2 flex justify-between items-center flex-shrink-0">
         <div className="flex items-center space-x-1">
           <Button 
             variant="outline" 
@@ -144,7 +141,7 @@ const PDFViewer: React.FC = () => {
           </Button>
           
           <div className="px-2">
-            <span className="text-surface-700">
+            <span className="text-surface-700 text-sm">
               Page <span className="font-medium">{currentPage}</span> of{' '}
               <span className="font-medium">{totalPages}</span>
             </span>
@@ -209,7 +206,7 @@ const PDFViewer: React.FC = () => {
           initial={{ height: 0, opacity: 0 }}
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
-          className="bg-white border-b border-surface-200 p-2"
+          className="bg-white border-b border-surface-200 p-2 flex-shrink-0"
         >
           <div className="relative">
             <input
@@ -232,7 +229,7 @@ const PDFViewer: React.FC = () => {
       )}
 
       {/* PDF document */}
-      <div className="flex-1 overflow-auto bg-surface-200 p-4">
+      <div className="flex-1 overflow-auto bg-surface-200 p-4 min-h-0">
         {error ? (
           <div className="h-full flex items-center justify-center">
             <div className="text-center text-red-600">
@@ -240,7 +237,7 @@ const PDFViewer: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex justify-center h-full">
+          <div className="flex justify-center min-h-full">
             <Document
               file={pdfFile}
               onLoadSuccess={onDocumentLoadSuccess}
@@ -250,7 +247,7 @@ const PDFViewer: React.FC = () => {
                   <LoadingSpinner size="lg" />
                 </div>
               }
-              className="w-full h-full"
+              className="w-full max-w-none"
             >
               <Page
                 pageNumber={currentPage}

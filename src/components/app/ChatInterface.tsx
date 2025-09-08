@@ -38,12 +38,8 @@ const ChatInterface: React.FC = () => {
   }, [messages]);
 
   const MessageBubble: React.FC<{ message: Message }> = ({ message }) => {
-    const [isCopied, setIsCopied] = useState(false);
-    
     const handleCopy = async () => {
       await copyToClipboard(message.content);
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
     };
 
     const isUser = message.sender === 'user';
@@ -97,9 +93,9 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-surface-50 rounded-lg">
+    <div className="flex flex-col h-full bg-surface-50 rounded-lg overflow-hidden">
       {/* Chat header */}
-      <div className="bg-white border-b border-surface-200 p-4 flex justify-between items-center">
+      <div className="bg-white border-b border-surface-200 p-4 flex justify-between items-center flex-shrink-0">
         <h3 className="font-semibold text-surface-900">Chat with AI Assistant</h3>
         {messages.length > 0 && (
           <Button
@@ -115,7 +111,7 @@ const ChatInterface: React.FC = () => {
       {/* Chat messages */}
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-4 bg-surface-100"
+        className="flex-1 overflow-y-auto p-4 bg-surface-100 min-h-0"
       >
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center p-6">
@@ -169,7 +165,7 @@ const ChatInterface: React.FC = () => {
       {/* FAQ toggle */}
       <button
         onClick={() => setShowFAQ(!showFAQ)}
-        className="bg-white border-t border-b border-surface-200 p-3 flex items-center justify-between text-surface-700 hover:bg-surface-50 transition-colors"
+        className="bg-white border-t border-b border-surface-200 p-3 flex items-center justify-between text-surface-700 hover:bg-surface-50 transition-colors flex-shrink-0"
       >
         <span className="font-medium">Common Questions</span>
         {showFAQ ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -183,7 +179,7 @@ const ChatInterface: React.FC = () => {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="overflow-hidden bg-white border-b border-surface-200"
+            className="overflow-hidden bg-white border-b border-surface-200 flex-shrink-0"
           >
             <FAQDropdown onSelectQuestion={(question) => {
               sendMessage(question);
@@ -194,7 +190,7 @@ const ChatInterface: React.FC = () => {
       </AnimatePresence>
       
       {/* Chat input */}
-      <div className="bg-white p-4 border-t border-surface-200">
+      <div className="bg-white p-4 border-t border-surface-200 flex-shrink-0">
         <form onSubmit={handleSend} className="flex gap-2">
           <input
             type="text"
