@@ -45,19 +45,23 @@
   }
   
   .btn-primary {
-    @apply btn bg-primary-700 text-white focus-visible:ring-primary-500 font-bold shadow-md text-lg tracking-wide;
+    @apply btn bg-primary-600 text-white focus-visible:ring-primary-500 font-bold shadow-lg text-lg tracking-wide border-2 border-primary-600;
   }
   
   .btn-primary:hover {
-    @apply bg-primary-800 scale-105 shadow-lg transition-all duration-200 ease-in-out;
+    @apply bg-primary-700 border-primary-700 scale-105 shadow-xl transition-all duration-200 ease-in-out;
+  }
+  
+  .btn-primary:focus {
+    @apply ring-4 ring-primary-300 ring-opacity-50;
   }
   
   .btn-secondary {
-    @apply btn bg-secondary-200 text-secondary-900 focus-visible:ring-secondary-500 font-bold shadow-md border border-secondary-300 text-lg tracking-wide;
+    @apply btn bg-white text-primary-700 focus-visible:ring-secondary-500 font-bold shadow-lg border-2 border-primary-600 text-lg tracking-wide;
   }
   
   .btn-secondary:hover {
-    @apply bg-secondary-300 scale-105 shadow-lg transition-all duration-200 ease-in-out;
+    @apply bg-primary-50 border-primary-700 scale-105 shadow-xl transition-all duration-200 ease-in-out;
   }
   
   .btn-outline {
@@ -78,6 +82,10 @@
   
   .glass-card {
     @apply bg-white/80 backdrop-blur-glass rounded-xl shadow-glass border border-white/20;
+  }
+  
+  .glass-card-dark {
+    @apply bg-white/10 backdrop-blur-lg rounded-xl shadow-lg border border-white/20;
   }
   
   .premium-card {
