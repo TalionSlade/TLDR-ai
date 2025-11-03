@@ -1,0 +1,20 @@
+architecture snapshot
+Frontend (src): A Vite-powered React 18 SPA written in TypeScript, styled with TailwindCSS and animated via Framer Motion. The app is split into landing views and the core application shell.
+
+PDFContext tracks the uploaded file, pagination, zoom, upload state, and the backend-issued sessionId.
+ChatContext orchestrates the conversational flow, pushing messages into state, streaming responses, and decorating assistant replies with page references.
+PDFUploader validates PDFs (<10 MB), calls uploadPDF, then seeds PDFContext with the new session metadata; PDFViewer renders pages through react-pdf while keeping pagination/zoom in sync with context.
+ChatInterface renders the threaded conversation, formats assistant answers with react-markdown + remark-gfm, offers copy-to-clipboard, and exposes canned FAQs that call sendMessage.
+HTTP integration lives in ragService.ts, which reads VITE_API_BASE_URL and wraps /upload, /chat, /sessions, /health, and /session/{id}; the service expects ChatContext to provide the active session.
+Backend (Backend): A FastAPI service (BackendServer.py) exposing /upload and /chat endpoints plus lightweight session management.
+
+PDFProcessor combines pdfplumber/PyPDF2 for extraction with LangChain’s RecursiveCharacterTextSplitter to produce overlapping 1 000-char chunks.
+VectorStore lazily loads SentenceTransformers (all-MiniLM-L6-v2) and FAISS, persists the index in faiss_store, and returns similarity-ranked snippets for each query.
+LLMService instantiates either OpenAI or Anthropic clients, wraps context into a RAG prompt, enforces concise Markdown answers, and attaches page-level references drawn from the retrieved chunks.
+Configuration is centralized in config.py via pydantic-settings, controlling ports, chunk sizing, CORS origins, embedding model, and provider API keys from .env.
+Sessions are kept in-memory for now (with a note to swap for Redis/DB in production); deleting the last session clears the FAISS index.
+Data flow:
+
+Upload: SPA → /upload → PDF extraction/chunking → embeddings → FAISS persist → session metadata returned to client.
+Question: SPA → /chat → FAISS search → top chunks contextualize LLM → formatted Markdown response plus reference list → UI renders via ReactMarkdown.
+Dependencies & tooling: Frontend dependencies (see package.json) include react-markdown, remark-gfm, react-pdf, uuid, and lucide-react. Backend dependencies (requirements.txt) cover FastAPI, uvicorn, SentenceTransformers, FAISS, LangChain, OpenAI, and Anthropic SDKs.
