@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MessageSquare, Search, X } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { commonFAQs } from '../../services/mockRagService';
+import { commonFAQs } from '../../services/ragService';
 
 interface FAQDropdownProps {
   onSelectQuestion: (question: string) => void;

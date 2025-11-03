@@ -2,10 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Upload, FileText, X } from 'lucide-react';
 import { usePDFContext } from '../../context/PDFContext';
+import { uploadPDF } from '../../services/ragService';
 import Button from '../common/Button';
 
 const PDFUploader: React.FC = () => {
-  const { setPdfFile, isUploading, setIsUploading, uploadProgress, setUploadProgress } = usePDFContext();
+  const { setPdfFile, setSessionId, setTotalPages, isUploading, setIsUploading, uploadProgress, setUploadProgress } = usePDFContext();
   const [isDragActive, setIsDragActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +20,7 @@ const PDFUploader: React.FC = () => {
   }, []);
 
   const handleFile = useCallback(
-    (file: File | null) => {
+    async (file: File | null) => {
       if (!file) return;
 
       // Check if file is PDF
@@ -38,20 +39,23 @@ const PDFUploader: React.FC = () => {
       setIsUploading(true);
       setUploadProgress(0);
 
-      // Simulate upload progress
-      const interval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setIsUploading(false);
-            setPdfFile(file);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 200);
+      try {
+        // Upload to backend
+        const response = await uploadPDF(file);
+        
+        // Update context with session info
+        setSessionId(response.session_id);
+        setTotalPages(response.total_pages);
+        setPdfFile(file);
+        setUploadProgress(100);
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to upload PDF';
+        setError(errorMessage);
+      } finally {
+        setIsUploading(false);
+      }
     },
-    [setIsUploading, setUploadProgress, setPdfFile]
+    [setIsUploading, setUploadProgress, setPdfFile, setSessionId, setTotalPages]
   );
 
   const onDrop = useCallback(
@@ -118,14 +122,15 @@ const PDFUploader: React.FC = () => {
               onChange={onFileChange}
               className="hidden"
             />
-            <Button
-              as="label"
-              htmlFor="file-upload"
-              variant="outline"
-              className="cursor-pointer"
-            >
-              Select PDF File
-            </Button>
+            <label htmlFor="file-upload">
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => document.getElementById('file-upload')?.click()}
+              >
+                Select PDF File
+              </Button>
+            </label>
 
             {error && (
               <div className="mt-4 text-red-500 flex items-center gap-2">

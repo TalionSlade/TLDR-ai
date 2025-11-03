@@ -1,6 +1,7 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { createContext, useState, useContext, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { generateMockResponse } from '../services/mockRagService';
+import { sendChatMessage } from '../services/ragService';
+import { usePDFContext } from './PDFContext';
 
 export interface Message {
   id: string;
@@ -39,13 +40,15 @@ interface ChatContextProviderProps {
 export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { sessionId } = usePDFContext();
 
-  const addMessage = (content: string, sender: 'user' | 'assistant') => {
+  const addMessage = (content: string, sender: 'user' | 'assistant', references?: Message['references']) => {
     const newMessage: Message = {
       id: uuidv4(),
       content,
       sender,
       timestamp: new Date(),
+      references,
     };
     
     setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -53,18 +56,40 @@ export const ChatContextProvider = ({ children }: ChatContextProviderProps) => {
   };
 
   const sendMessage = async (content: string) => {
+    // Check if session exists
+    if (!sessionId) {
+      addMessage(
+        'Please upload a PDF document first before asking questions.',
+        'assistant'
+      );
+      return;
+    }
+
     // Add user message
     addMessage(content, 'user');
     
-    // Simulate assistant thinking
+    // Set loading state
     setIsLoading(true);
     
-    // Get mock response with artificial delay
-    setTimeout(() => {
-      const response = generateMockResponse(content);
-      addMessage(response.content, 'assistant');
+    try {
+      // Call real backend API
+      const response = await sendChatMessage(content, sessionId);
+      
+      // Add assistant response with references
+      addMessage(response.content, 'assistant', response.references);
+    } catch (error) {
+      // Handle errors
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to get response from server. Please try again.';
+      
+      addMessage(
+        `Sorry, I encountered an error: ${errorMessage}`,
+        'assistant'
+      );
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   const clearChat = () => {

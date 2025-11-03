@@ -1,9 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react';
+import type {
+  AnchorHTMLAttributes,
+  DetailedHTMLProps,
+  HTMLAttributes,
+  ReactNode
+} from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SendHorizontal, Copy, ChevronDown, ChevronUp } from 'lucide-react';
 import { useChatContext, Message } from '../../context/ChatContext';
 import Button from '../common/Button';
 import FAQDropdown from './FAQDropdown';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import type { Components } from 'react-markdown';
 
 const ChatInterface: React.FC = () => {
   const { messages, sendMessage, isLoading, clearChat } = useChatContext();
@@ -43,6 +52,160 @@ const ChatInterface: React.FC = () => {
     };
 
     const isUser = message.sender === 'user';
+    const mergeClassNames = (base: string, additional?: string) =>
+      additional ? `${base} ${additional}` : base;
+
+    type ParagraphProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLParagraphElement>,
+      HTMLParagraphElement
+    >;
+
+    type ListProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLUListElement>,
+      HTMLUListElement
+    >;
+
+    type OrderedListProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLOListElement>,
+      HTMLOListElement
+    >;
+
+    type ListItemProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLLIElement>,
+      HTMLLIElement
+    >;
+
+    type StrongProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLElement>,
+      HTMLElement
+    >;
+
+    type AnchorProps = DetailedHTMLProps<
+      AnchorHTMLAttributes<HTMLAnchorElement>,
+      HTMLAnchorElement
+    >;
+
+    type BlockquoteProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLQuoteElement>,
+      HTMLQuoteElement
+    >;
+
+    type HeadingProps = DetailedHTMLProps<
+      HTMLAttributes<HTMLHeadingElement>,
+      HTMLHeadingElement
+    >;
+
+    type CodeProps = {
+      inline?: boolean;
+      className?: string;
+      children?: ReactNode;
+    } & DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
+
+    const markdownComponents: Components = {
+      p: ({ className, ...props }: ParagraphProps) => (
+        <p
+          className={mergeClassNames(
+            'text-sm text-surface-800 leading-relaxed mb-2 last:mb-0',
+            className
+          )}
+          {...props}
+        />
+      ),
+      ul: ({ className, ...props }: ListProps) => (
+        <ul
+          className={mergeClassNames(
+            'list-disc pl-5 text-sm text-surface-800 leading-relaxed mb-2',
+            className
+          )}
+          {...props}
+        />
+      ),
+      ol: ({ className, ...props }: OrderedListProps) => (
+        <ol
+          className={mergeClassNames(
+            'list-decimal pl-5 text-sm text-surface-800 leading-relaxed mb-2',
+            className
+          )}
+          {...props}
+        />
+      ),
+      li: ({ className, ...props }: ListItemProps) => (
+        <li className={mergeClassNames('mb-1 last:mb-0', className)} {...props} />
+      ),
+      strong: ({ className, ...props }: StrongProps) => (
+        <strong
+          className={mergeClassNames('text-surface-900 font-semibold', className)}
+          {...props}
+        />
+      ),
+      a: ({ className, target, rel, ...props }: AnchorProps) => (
+        <a
+          className={mergeClassNames('text-primary-600 underline font-medium', className)}
+          target={target ?? '_blank'}
+          rel={rel ?? 'noreferrer'}
+          {...props}
+        />
+      ),
+      blockquote: ({ className, ...props }: BlockquoteProps) => (
+        <blockquote
+          className={mergeClassNames(
+            'border-l-4 border-primary-200 pl-3 text-surface-700 italic',
+            className
+          )}
+          {...props}
+        />
+      ),
+      code: ({ inline, className, children, ...props }: CodeProps) => {
+        if (inline) {
+          return (
+            <code
+              className={mergeClassNames(
+                'bg-surface-100 text-surface-800 px-1 py-0.5 rounded',
+                className
+              )}
+              {...props}
+            >
+              {children}
+            </code>
+          );
+        }
+
+        return (
+          <pre className="bg-surface-100 text-surface-800 p-3 rounded-md overflow-x-auto text-xs">
+            <code className={className} {...props}>
+              {children}
+            </code>
+          </pre>
+        );
+      },
+      h1: ({ className, ...props }: HeadingProps) => (
+        <h3
+          className={mergeClassNames(
+            'text-lg font-semibold text-surface-900 mb-2',
+            className
+          )}
+          {...props}
+        />
+      ),
+      h2: ({ className, ...props }: HeadingProps) => (
+        <h4
+          className={mergeClassNames(
+            'text-base font-semibold text-surface-900 mb-2',
+            className
+          )}
+          {...props}
+        />
+      ),
+      h3: ({ className, ...props }: HeadingProps) => (
+        <h5
+          className={mergeClassNames(
+            'text-sm font-semibold text-surface-900 mb-2 uppercase tracking-wide',
+            className
+          )}
+          {...props}
+        />
+      )
+    };
     
     return (
       <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
@@ -54,9 +217,21 @@ const ChatInterface: React.FC = () => {
           }`}
         >
           <div className="flex items-start gap-2">
-            <p className={`text-sm ${isUser ? 'text-white' : 'text-surface-800'}`}>
-              {message.content}
-            </p>
+            <div className="flex-1">
+              {isUser ? (
+                <p className="text-sm text-white leading-relaxed">
+                  {message.content}
+                </p>
+              ) : (
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={markdownComponents}
+                  className="space-y-2"
+                >
+                  {message.content}
+                </ReactMarkdown>
+              )}
+            </div>
             
             {!isUser && (
               <button

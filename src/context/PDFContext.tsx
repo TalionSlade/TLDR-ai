@@ -18,6 +18,8 @@ interface PDFContextType {
   setTotalPages: (pages: number) => void;
   scale: number;
   setScale: (scale: number) => void;
+  sessionId: string | null;
+  setSessionId: (sessionId: string | null) => void;
 }
 
 const PDFContext = createContext<PDFContextType | undefined>(undefined);
@@ -42,6 +44,7 @@ export const PDFContextProvider = ({ children }: PDFContextProviderProps) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [scale, setScale] = useState(1.0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
   // Update file info when pdfFile changes
   React.useEffect(() => {
@@ -70,6 +73,8 @@ export const PDFContextProvider = ({ children }: PDFContextProviderProps) => {
     setTotalPages,
     scale,
     setScale,
+    sessionId,
+    setSessionId,
   };
 
   return <PDFContext.Provider value={value}>{children}</PDFContext.Provider>;

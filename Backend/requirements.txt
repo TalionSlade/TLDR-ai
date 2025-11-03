@@ -1,0 +1,28 @@
+# Core Backend Framework
+fastapi==0.115.5
+uvicorn[standard]==0.34.0
+python-multipart==0.0.12
+
+# CORS and Security
+python-dotenv==1.0.0
+
+# PDF Processing
+PyPDF2==3.0.1
+pdfplumber==0.11.0
+
+# LLM Integration
+openai==1.109.1
+anthropic==0.39.0
+langchain==0.3.13
+langchain-openai==0.2.12
+langchain-community==0.3.13
+
+# Vector Store and Embeddings
+faiss-cpu==1.8.0
+sentence-transformers==2.3.1
+
+# Utilities
+tiktoken==0.8.0
+numpy==1.26.3
+pydantic==2.9.2
+pydantic-settings==2.5.2
