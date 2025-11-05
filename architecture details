@@ -18,3 +18,14 @@ Data flow:
 Upload: SPA → /upload → PDF extraction/chunking → embeddings → FAISS persist → session metadata returned to client.
 Question: SPA → /chat → FAISS search → top chunks contextualize LLM → formatted Markdown response plus reference list → UI renders via ReactMarkdown.
 Dependencies & tooling: Frontend dependencies (see package.json) include react-markdown, remark-gfm, react-pdf, uuid, and lucide-react. Backend dependencies (requirements.txt) cover FastAPI, uvicorn, SentenceTransformers, FAISS, LangChain, OpenAI, and Anthropic SDKs.
+
+
+
+
+
+
+
+Balancing rich Markdown rendering with Tailwind styling meant building custom ReactMarkdown component overrides and aggressively testing edge-case formatting (lists, code blocks, nested headings) so the chat UI stayed readable.
+The FAISS + SentenceTransformers stack proved sensitive to dependency versions and lazy initialization order; we had to rework initialization to avoid import-time crashes and ensure the embeddings index persisted safely.
+Prompt-tuning for concise, page-referenced answers required several iterations—lowering temperature, tightening instructions, and synthesizing context metadata—to keep responses both professional and cite-aware.
+Handling large PDF uploads surfaced performance and validation issues; chunking thresholds, size guards, and user-facing feedback (progress, errors) all had to be tuned to keep the upload/processing flow resilient.
